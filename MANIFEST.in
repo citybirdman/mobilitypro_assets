@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include mobilitypro_assets *.css
+recursive-include mobilitypro_assets *.csv
+recursive-include mobilitypro_assets *.html
+recursive-include mobilitypro_assets *.ico
+recursive-include mobilitypro_assets *.js
+recursive-include mobilitypro_assets *.json
+recursive-include mobilitypro_assets *.md
+recursive-include mobilitypro_assets *.png
+recursive-include mobilitypro_assets *.py
+recursive-include mobilitypro_assets *.svg
+recursive-include mobilitypro_assets *.txt
+recursive-exclude mobilitypro_assets *.pyc
