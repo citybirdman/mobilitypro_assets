@@ -1,0 +1,273 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2023-11-02 16:20:36.288401",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "expense_name",
+  "expense_category",
+  "is_existing_expense",
+  "journal_entry_for_closing",
+  "column_break_3",
+  "naming_series",
+  "company",
+  "closing_date",
+  "accounting_dimensions_section",
+  "defered_expense_account",
+  "branch",
+  "dimension_col_break",
+  "expense_account",
+  "cost_center",
+  "section_break_ddtsx",
+  "start_service_date",
+  "gross_expense_amount",
+  "column_break_33",
+  "opening_realized_expense_balance",
+  "number_of_adjustments_booked",
+  "section_break_36",
+  "total_number_of_adjustments",
+  "frequency_of_depreciation",
+  "column_break_24",
+  "balance_after_adjustments",
+  "section_break_14",
+  "schedules",
+  "other_details",
+  "status",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "expense_name",
+   "fieldtype": "Data",
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Expense Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "expense_category",
+   "fieldtype": "Link",
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Expense Category",
+   "options": "Expense Category",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_existing_expense",
+   "fieldtype": "Check",
+   "label": "Is Existing Expense"
+  },
+  {
+   "fieldname": "journal_entry_for_closing",
+   "fieldtype": "Link",
+   "label": "Journal Entry for Closing",
+   "no_copy": 1,
+   "options": "Journal Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "ACC-DEXP-.YYYY.-",
+   "reqd": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "remember_last_selected_value": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "closing_date",
+   "fieldtype": "Date",
+   "label": "Closing Date",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fetch_from": "expense_category.defered_expense_account",
+   "fieldname": "defered_expense_account",
+   "fieldtype": "Link",
+   "label": "Defered Expense Account",
+   "options": "Account",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "expense_category.expense_account",
+   "fieldname": "expense_account",
+   "fieldtype": "Link",
+   "label": "Expense Account",
+   "options": "Account",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cost_center",
+   "fieldtype": "Link",
+   "label": "Cost Center",
+   "options": "Cost Center"
+  },
+  {
+   "fieldname": "dimension_col_break",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Branch"
+  },
+  {
+   "fieldname": "section_break_ddtsx",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "start_service_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Start Service Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "gross_expense_amount",
+   "fieldtype": "Currency",
+   "label": "Gross Expense Amount",
+   "options": "Company:company:default_currency",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_33",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.is_existing_expense",
+   "fieldname": "opening_realized_expense_balance",
+   "fieldtype": "Currency",
+   "label": "Opening Realized Expense Balance"
+  },
+  {
+   "depends_on": "eval:(doc.opening_realized_expense_balance && doc.is_existing_expense)",
+   "fieldname": "number_of_adjustments_booked",
+   "fieldtype": "Int",
+   "label": "Number of Adjustments Booked",
+   "no_copy": 1
+  },
+  {
+   "fieldname": "section_break_36",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "total_number_of_adjustments",
+   "fieldtype": "Int",
+   "label": "Total Number of Adjustments",
+   "reqd": 1
+  },
+  {
+   "fieldname": "frequency_of_depreciation",
+   "fieldtype": "Int",
+   "label": "Frequency of Adjustments (Months)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_24",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "balance_after_adjustments",
+   "fieldtype": "Currency",
+   "label": "Balance After Adjustments",
+   "no_copy": 1,
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_14",
+   "fieldtype": "Section Break",
+   "label": "Adjustments Schedule"
+  },
+  {
+   "fieldname": "schedules",
+   "fieldtype": "Table",
+   "label": "Adjustments Schedule",
+   "no_copy": 1,
+   "options": "Adjustments Schedule"
+  },
+  {
+   "fieldname": "other_details",
+   "fieldtype": "Section Break",
+   "label": "Other Details"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "Draft",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "no_copy": 1,
+   "options": "Draft\nSubmitted\nPartially Adjusted\nFully Adjusted\nClosed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Defered Expense",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "collapsible_depends_on": "expense_category",
+   "fieldname": "accounting_dimensions_section",
+   "fieldtype": "Section Break",
+   "label": "Accounting Dimensions"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2023-11-07 12:49:13.610105",
+ "modified_by": "Administrator",
+ "module": "Mobilitypro Assets",
+ "name": "Defered Expense",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "select": 1,
+   "set_user_permissions": 1,
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

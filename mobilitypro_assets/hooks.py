@@ -56,13 +56,13 @@ app_license = "MIT"
 # Installation
 # ------------
 
-# before_install = "mobilitypro_assets.install.before_install"
+before_install = "mobilitypro_assets.install.before_install"
 # after_install = "mobilitypro_assets.install.after_install"
 
 # Uninstallation
 # ------------
 
-# before_uninstall = "mobilitypro_assets.uninstall.before_uninstall"
+before_uninstall = "mobilitypro_assets.uninstall.before_uninstall"
 # after_uninstall = "mobilitypro_assets.uninstall.after_uninstall"
 
 # Desk Notifications
@@ -106,10 +106,10 @@ app_license = "MIT"
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-#	"all": [
-#		"mobilitypro_assets.tasks.all"
-#	],
+scheduler_events = {
+	"all": [
+		"mobilitypro_assets.tasks.make_expense_entries"
+	],
 #	"daily": [
 #		"mobilitypro_assets.tasks.daily"
 #	],
@@ -122,7 +122,7 @@ app_license = "MIT"
 #	"monthly": [
 #		"mobilitypro_assets.tasks.monthly"
 #	]
-# }
+}
 
 # Testing
 # -------

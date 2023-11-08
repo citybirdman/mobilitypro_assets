@@ -1,0 +1,58 @@
+{
+ "cards_label": "Doctypes",
+ "category": "Modules",
+ "charts": [],
+ "creation": "2023-11-05 17:49:19.939229",
+ "developer_mode_only": 0,
+ "disable_user_customization": 0,
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "extends_another_page": 0,
+ "hide_custom": 0,
+ "icon": "home",
+ "idx": 0,
+ "is_default": 0,
+ "is_standard": 1,
+ "label": "Aiding tools",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Doctypes",
+   "link_to": "",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Deffered Expense",
+   "link_to": "Deffered Expense",
+   "link_type": "DocType",
+   "onboard": 0,
+   "only_for": "Afghanistan",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Expense Category",
+   "link_to": "Expense Category",
+   "link_type": "DocType",
+   "onboard": 0,
+   "only_for": "Afghanistan",
+   "type": "Link"
+  }
+ ],
+ "modified": "2023-11-05 17:49:19.939229",
+ "modified_by": "ahmed.zaytoon@mobilityp.com",
+ "module": "Mobilitypro Assets",
+ "name": "Aiding tools",
+ "onboarding": "",
+ "owner": "ahmed.zaytoon@mobilityp.com",
+ "pin_to_bottom": 0,
+ "pin_to_top": 0,
+ "shortcuts": [],
+ "shortcuts_label": ""
+}

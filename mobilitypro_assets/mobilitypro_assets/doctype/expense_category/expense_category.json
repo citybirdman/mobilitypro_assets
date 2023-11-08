@@ -1,0 +1,103 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:expense_category",
+ "creation": "2023-11-02 13:48:03.980699",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "expense_category",
+  "lft",
+  "rgt",
+  "defered_expense_account",
+  "expense_account",
+  "column_break_0eahb",
+  "parent_expense_category",
+  "is_group"
+ ],
+ "fields": [
+  {
+   "fieldname": "lft",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Left",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "rgt",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Right",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_group",
+   "fieldtype": "Check",
+   "label": "Is Group"
+  },
+  {
+   "fieldname": "parent_expense_category",
+   "fieldtype": "Link",
+   "label": "Parent Expense Category",
+   "options": "Expense Category"
+  },
+  {
+   "fieldname": "expense_category",
+   "fieldtype": "Data",
+   "label": "Expense Category",
+   "unique": 1
+  },
+  {
+   "fieldname": "defered_expense_account",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Defered Expense Account",
+   "options": "Account",
+   "reqd": 1
+  },
+  {
+   "fieldname": "expense_account",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Expense Account",
+   "options": "Account",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_0eahb",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_tree": 1,
+ "links": [],
+ "modified": "2023-11-07 12:21:23.512289",
+ "modified_by": "Administrator",
+ "module": "Mobilitypro Assets",
+ "name": "Expense Category",
+ "name_case": "Title Case",
+ "nsm_parent_field": "parent_expense_category",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "title_field": "expense_category",
+ "track_changes": 1
+}
