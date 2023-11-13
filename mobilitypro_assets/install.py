@@ -7,7 +7,7 @@ def customize_journal_entry_account_reference_type_field():
     options = frappe.db.get_value("Property Setter", {"doc_type": "Journal Entry Account", "field_name":"reference_type", "property":"options"}, "value")
     if not options:
         options = frappe.db.get_value("DocField", {"parent": "Journal Entry Account", "fieldname":"reference_type"}, "options")
-    options += "\nDefered Entry"
+    options += "\nDeferred Expense"
     frappe.db.set_value("Property Setter", 
                         {"doc_type": "Journal Entry Account", "field_name":"reference_type", "property":"options"},
                         "value", options)

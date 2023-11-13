@@ -6,36 +6,28 @@ import math
 
 import frappe
 from frappe import _
-from frappe.utils import (
-	add_days,
-	add_months,
-	cint,
-	date_diff,
-	flt,
-	get_datetime,
-	get_last_day,
-	get_first_day,
-	getdate,
-	month_diff,
-	nowdate,
-	today,
-)
+from frappe.utils import (add_months, date_diff, get_last_day, get_first_day, getdate)
 
 from erpnext.controllers.accounts_controller import AccountsController
 
-class DeferedExpense(AccountsController):
+class DeferredExpense(AccountsController):
 	def validate(self):
-		# self.status = self.get_status()
+		pass
+
+	def before_save(self):
 		self.calculate_adjustment_entries()
-		create_journal_entry(self, "2023-10-01", 1000)
 
-	# def on_submit(self):
-	# 	# self.set_status()
-	# 	pass
+	def on_submit(self):
+		self.set_status("Submitted")
 
-	# def on_cancel(self):
-	# 	# self.set_status()
-	# 	pass
+	def before_cancel(self):
+		frappe.throw("wtf!!!!")
+		self.ignore_linked_doctypes = ["Journal Entry", "GL Entry", "Stock Ledger Entry"]
+		self.ignore_doctypes_on_cancel_all = ["Journal Entry", "GL Entry", "Stock Ledger Entry"]
+
+	def on_cancel(self):
+		self.set_status("Cancelled")
+		self.unlink_journal_entries()
 
 
 
@@ -130,37 +122,18 @@ class DeferedExpense(AccountsController):
 			date = add_months(date, months)
 		self.schedules[-1].schedule_date = date
 
-
-
+	def unlink_journal_entries(self):
+		jv_list = []
+		for d in self.get("schedules"):
+			if d.journal_entry:
+				# frappe.db.set_value("Adjustments Schedule", d.name, "journal_entry", None)
+				frappe.get_doc("Journal Entry", d.journal_entry).cancel()
+				frappe.delete_doc("Journal Entry", d.journal_entry, force=True, ignore_permissions=True)
 
 
 
 
 # frappe useful functions
-@frappe.whitelist()
-def create_journal_entry(doc, date, amount):
-	accounts = []
-	accounts.append({
-		'account': doc.defered_expense_account,
-		'debit_in_account_currency': abs(amount),
-		'reference_type': 'deferred expense',
-		'reference_name': doc.name,
-		'branch': doc.branch
-	})
-	accounts.append({
-		'account': doc.expense_account,
-		'credit_in_account_currency': abs(amount)
-	})
-	journal_entry = frappe.get_doc({
-		'doctype': 'Journal Entry',
-		'company': doc.company,
-		'posting_date': date,
-		'accounts': accounts,
-		'voucher_type': 'Cash Entry',
-		'title': 'Deferred Expense ' + doc.name,
-		# 'user_remark': 'مصاريف فسح حركة مخزنية رقم ' + doc.name
-	}).insert()
-	journal_entry.submit()
 
 
 
@@ -182,10 +155,8 @@ def create_journal_entry(doc, date, amount):
 
 
 
-	# def set_status(self):
-	# 	if self.docstatus == 1:
-	# 		status = self.get_status()
-	# 		self.db_set("status", status)
+	def set_status(self, status):
+		self.db_set("status", status)
 
 	# def get_status(self):
 	# 	return "Fully Adjusted"

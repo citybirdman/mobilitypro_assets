@@ -4,5 +4,5 @@
 # import frappe
 import unittest
 
-class TestDeferedExpense(unittest.TestCase):
+class TestDeferredExpense(unittest.TestCase):
 	pass

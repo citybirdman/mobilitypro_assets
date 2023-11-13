@@ -27,8 +27,8 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Deffered Expense",
-   "link_to": "Deffered Expense",
+   "label": "Deferred Expense",
+   "link_to": "Deferred Expense",
    "link_type": "DocType",
    "onboard": 0,
    "only_for": "Afghanistan",
@@ -45,8 +45,8 @@
    "type": "Link"
   }
  ],
- "modified": "2023-11-05 17:49:19.939229",
- "modified_by": "ahmed.zaytoon@mobilityp.com",
+ "modified": "2023-11-13 10:34:41.050408",
+ "modified_by": "Administrator",
  "module": "Mobilitypro Assets",
  "name": "Aiding tools",
  "onboarding": "",

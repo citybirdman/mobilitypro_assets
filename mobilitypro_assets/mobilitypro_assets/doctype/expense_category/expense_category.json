@@ -10,11 +10,13 @@
   "expense_category",
   "lft",
   "rgt",
-  "defered_expense_account",
+  "deferred_expense_account",
   "expense_account",
   "column_break_0eahb",
   "parent_expense_category",
-  "is_group"
+  "is_group",
+  "old_parent",
+  "amended_from"
  ],
  "fields": [
   {
@@ -52,30 +54,48 @@
    "unique": 1
   },
   {
-   "fieldname": "defered_expense_account",
+   "depends_on": "eval: !doc.is_group",
+   "fieldname": "deferred_expense_account",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "deferred expense Account",
-   "options": "Account",
-   "reqd": 1
+   "mandatory_depends_on": "eval: !doc.is_group",
+   "options": "Account"
   },
   {
+   "depends_on": "eval: !doc.is_group",
    "fieldname": "expense_account",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Expense Account",
-   "options": "Account",
-   "reqd": 1
+   "mandatory_depends_on": "eval: !doc.is_group",
+   "options": "Account"
   },
   {
    "fieldname": "column_break_0eahb",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "old_parent",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Old Parent",
+   "options": "Expense Category"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Expense Category",
+   "print_hide": 1,
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2023-11-07 12:21:23.512289",
+ "modified": "2023-11-13 14:48:04.575837",
  "modified_by": "Administrator",
  "module": "Mobilitypro Assets",
  "name": "Expense Category",
