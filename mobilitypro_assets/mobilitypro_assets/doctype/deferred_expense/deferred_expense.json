@@ -177,9 +177,12 @@
    "reqd": 1
   },
   {
+   "default": "1",
    "fieldname": "frequency_of_depreciation",
    "fieldtype": "Int",
+   "hidden": 1,
    "label": "Frequency of Adjustments (Months)",
+   "read_only": 1,
    "reqd": 1
   },
   {
@@ -204,7 +207,8 @@
    "fieldtype": "Table",
    "label": "Adjustments Schedule",
    "no_copy": 1,
-   "options": "Adjustments Schedule"
+   "options": "Adjustments Schedule",
+   "read_only": 1
   },
   {
    "fieldname": "other_details",
@@ -243,7 +247,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-11-07 12:49:13.610105",
+ "modified": "2023-11-13 18:35:49.125438",
  "modified_by": "Administrator",
  "module": "Mobilitypro Assets",
  "name": "Deferred Expense",
@@ -262,6 +266,19 @@
    "role": "System Manager",
    "select": 1,
    "set_user_permissions": 1,
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
    "share": 1,
    "submit": 1,
    "write": 1

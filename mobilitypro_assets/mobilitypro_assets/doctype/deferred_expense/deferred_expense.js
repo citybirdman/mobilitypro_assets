@@ -2,6 +2,9 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Deferred Expense', {
+	setup: function(frm){
+		frm.ignore_doctypes_on_cancel_all = ['Journal Entry'];
+	},
 	onload: function(frm) {
 		frm.set_query("expense_category", {filters: {is_group:0} });
 	},

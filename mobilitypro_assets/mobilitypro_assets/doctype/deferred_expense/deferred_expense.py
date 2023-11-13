@@ -11,6 +11,7 @@ from frappe.utils import (add_months, date_diff, get_last_day, get_first_day, ge
 from erpnext.controllers.accounts_controller import AccountsController
 
 class DeferredExpense(AccountsController):
+
 	def validate(self):
 		pass
 
@@ -20,14 +21,10 @@ class DeferredExpense(AccountsController):
 	def on_submit(self):
 		self.set_status("Submitted")
 
-	def before_cancel(self):
-		frappe.throw("wtf!!!!")
-		self.ignore_linked_doctypes = ["Journal Entry", "GL Entry", "Stock Ledger Entry"]
-		self.ignore_doctypes_on_cancel_all = ["Journal Entry", "GL Entry", "Stock Ledger Entry"]
-
 	def on_cancel(self):
 		self.set_status("Cancelled")
 		self.unlink_journal_entries()
+		self.ignore_linked_doctypes = ["Journal Entry", "GL Entry", "Stock Ledger Entry"]
 
 
 
@@ -64,10 +61,10 @@ class DeferredExpense(AccountsController):
 
 		for n in range(entries_number):
 			#	checking the start service date
-			if n is not 0:
+			if n != 0:
 				last_day = get_last_day(add_months(last_day, 1))
 			amount = monthly_amount
-			if(n is 0 and check_month is 1):
+			if(n == 0 and check_month == 1):
 				month_range = date_diff(last_day, get_first_day(self.start_service_date)) + 1
 				amount = monthly_amount * date_diff(last_day, self.start_service_date)/month_range
 
@@ -123,40 +120,11 @@ class DeferredExpense(AccountsController):
 		self.schedules[-1].schedule_date = date
 
 	def unlink_journal_entries(self):
-		jv_list = []
 		for d in self.get("schedules"):
 			if d.journal_entry:
-				# frappe.db.set_value("Adjustments Schedule", d.name, "journal_entry", None)
 				frappe.get_doc("Journal Entry", d.journal_entry).cancel()
 				frappe.delete_doc("Journal Entry", d.journal_entry, force=True, ignore_permissions=True)
 
 
-
-
-# frappe useful functions
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	def set_status(self, status):
 		self.db_set("status", status)
-
-	# def get_status(self):
-	# 	return "Fully Adjusted"
