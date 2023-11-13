@@ -55,7 +55,7 @@
    "fieldname": "defered_expense_account",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Defered Expense Account",
+   "label": "deferred expense Account",
    "options": "Account",
    "reqd": 1
   },

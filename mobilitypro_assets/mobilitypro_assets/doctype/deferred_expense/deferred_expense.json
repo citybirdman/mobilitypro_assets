@@ -103,7 +103,7 @@
    "fetch_from": "expense_category.defered_expense_account",
    "fieldname": "defered_expense_account",
    "fieldtype": "Link",
-   "label": "Defered Expense Account",
+   "label": "deferred expense Account",
    "options": "Account",
    "read_only": 1
   },
@@ -228,7 +228,7 @@
    "fieldtype": "Link",
    "label": "Amended From",
    "no_copy": 1,
-   "options": "Defered Expense",
+   "options": "deferred expense",
    "print_hide": 1,
    "read_only": 1
   },
@@ -246,7 +246,7 @@
  "modified": "2023-11-07 12:49:13.610105",
  "modified_by": "Administrator",
  "module": "Mobilitypro Assets",
- "name": "Defered Expense",
+ "name": "deferred expense",
  "owner": "Administrator",
  "permissions": [
   {

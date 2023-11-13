@@ -1,7 +1,7 @@
 // Copyright (c) 2023, Ahmed Zaytoon and contributors
 // For license information, please see license.txt
 
-frappe.ui.form.on('Defered Expense', {
+frappe.ui.form.on('deferred expense', {
 	onload: function(frm) {
 		frm.set_query("expense_category", {filters: {is_group:0} });
 	},

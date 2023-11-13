@@ -56,13 +56,13 @@ app_license = "MIT"
 # Installation
 # ------------
 
-before_install = "mobilitypro_assets.install.before_install"
+before_install = "mobilitypro_assets.mobilitypro_assets.install.before_install"
 # after_install = "mobilitypro_assets.install.after_install"
 
 # Uninstallation
 # ------------
 
-before_uninstall = "mobilitypro_assets.uninstall.before_uninstall"
+before_uninstall = "mobilitypro_assets.mobilitypro_assets.uninstall.before_uninstall"
 # after_uninstall = "mobilitypro_assets.uninstall.after_uninstall"
 
 # Desk Notifications

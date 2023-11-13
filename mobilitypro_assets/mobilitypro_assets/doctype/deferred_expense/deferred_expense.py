@@ -143,7 +143,7 @@ def create_journal_entry(doc, date, amount):
 	accounts.append({
 		'account': doc.defered_expense_account,
 		'debit_in_account_currency': abs(amount),
-		'reference_type': 'Defered Expense',
+		'reference_type': 'deferred expense',
 		'reference_name': doc.name,
 		'branch': doc.branch
 	})
