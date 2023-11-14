@@ -14,6 +14,7 @@
   "column_break_3",
   "naming_series",
   "company",
+  "closing_journal_entry",
   "closing_date",
   "accounting_dimensions_section",
   "deferred_expense_account",
@@ -190,6 +191,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "balance_after_adjustments",
    "fieldtype": "Currency",
    "label": "Balance After Adjustments",
@@ -242,12 +244,22 @@
    "fieldname": "accounting_dimensions_section",
    "fieldtype": "Section Break",
    "label": "Accounting Dimensions"
+  },
+  {
+   "allow_on_submit": 1,
+   "depends_on": "eval: doc.closing_journal_entry",
+   "fieldname": "closing_journal_entry",
+   "fieldtype": "Link",
+   "label": "Closing Journal Entry",
+   "no_copy": 1,
+   "options": "Journal Entry",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-11-13 18:35:49.125438",
+ "modified": "2023-11-14 15:18:54.401720",
  "modified_by": "Administrator",
  "module": "Mobilitypro Assets",
  "name": "Deferred Expense",

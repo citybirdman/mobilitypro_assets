@@ -1,22 +1,23 @@
 # Copyright (c) 2023, Ahmed Zaytoon and contributors
 # For license information, please see license.txt
 
-import json
-import math
 
 import frappe
 from frappe import _
+from frappe.model.delete_doc import update_flags
 from frappe.utils import (add_months, date_diff, get_last_day, get_first_day, getdate)
+from mobilitypro_assets.tasks import update_balance
 
 from erpnext.controllers.accounts_controller import AccountsController
 
 class DeferredExpense(AccountsController):
 
 	def validate(self):
-		pass
+		self.flags.ignore_links = True
 
 	def before_save(self):
 		self.calculate_adjustment_entries()
+		update_balance(self)
 
 	def on_submit(self):
 		self.set_status("Submitted")
@@ -24,7 +25,7 @@ class DeferredExpense(AccountsController):
 	def on_cancel(self):
 		self.set_status("Cancelled")
 		self.unlink_journal_entries()
-		self.ignore_linked_doctypes = ["Journal Entry", "GL Entry", "Stock Ledger Entry"]
+		self.ignore_doctypes = ["Journal Entry", "GL Entry", "Stock Ledger Entry"]
 
 
 
@@ -120,10 +121,16 @@ class DeferredExpense(AccountsController):
 		self.schedules[-1].schedule_date = date
 
 	def unlink_journal_entries(self):
-		for d in self.get("schedules"):
-			if d.journal_entry:
-				frappe.get_doc("Journal Entry", d.journal_entry).cancel()
-				frappe.delete_doc("Journal Entry", d.journal_entry, force=True, ignore_permissions=True)
+		docs = []
+		if self.closing_journal_entry:
+			docs.append(self.closing_journal_entry)
+		for row in self.get("schedules"):
+			if row.journal_entry != None:
+				docs.append(row.journal_entry)
+		for jv in docs:
+			je = frappe.get_doc("Journal Entry", jv)
+			je.cancel()
+			je.delete(force=True, ignore_permissions=True, delete_permanently=True)
 
 
 	def set_status(self, status):

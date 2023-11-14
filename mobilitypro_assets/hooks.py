@@ -4,7 +4,7 @@ app_name = "mobilitypro_assets"
 app_title = "Mobilitypro Assets"
 app_publisher = "Ahmed Zaytoon"
 app_description = "Doctypes and custom more reports to deal with in mobility"
-app_icon = "octicon octicon-file-directory"
+app_icon = "mobilitypro_assets/boxes.svg"
 app_color = "green"
 app_email = "citybirdman@gmail.com"
 app_license = "MIT"
@@ -108,8 +108,7 @@ before_uninstall = "mobilitypro_assets.uninstall.before_uninstall"
 
 scheduler_events = {
 	"daily": [
-		"mobilitypro_assets.tasks.make_expense_entries",
-        "mobilitypro_assets.tasks.delete_jv"
+		"mobilitypro_assets.tasks.make_expense_entries"
 	],
 #	"daily": [
 #		"mobilitypro_assets.tasks.daily"

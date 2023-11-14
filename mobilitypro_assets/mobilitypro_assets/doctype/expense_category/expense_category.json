@@ -15,8 +15,7 @@
   "column_break_0eahb",
   "parent_expense_category",
   "is_group",
-  "old_parent",
-  "amended_from"
+  "old_parent"
  ],
  "fields": [
   {
@@ -81,21 +80,12 @@
    "hidden": 1,
    "label": "Old Parent",
    "options": "Expense Category"
-  },
-  {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Expense Category",
-   "print_hide": 1,
-   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2023-11-13 18:35:39.774460",
+ "modified": "2023-11-14 14:24:19.746030",
  "modified_by": "Administrator",
  "module": "Mobilitypro Assets",
  "name": "Expense Category",

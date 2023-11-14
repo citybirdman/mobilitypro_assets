@@ -9,7 +9,7 @@
  "doctype": "Workspace",
  "extends_another_page": 0,
  "hide_custom": 0,
- "icon": "home",
+ "icon": "",
  "idx": 0,
  "is_default": 0,
  "is_standard": 1,
@@ -45,7 +45,7 @@
    "type": "Link"
   }
  ],
- "modified": "2023-11-13 10:34:41.050408",
+ "modified": "2023-11-14 10:39:29.533097",
  "modified_by": "Administrator",
  "module": "Mobilitypro Assets",
  "name": "Aiding tools",
