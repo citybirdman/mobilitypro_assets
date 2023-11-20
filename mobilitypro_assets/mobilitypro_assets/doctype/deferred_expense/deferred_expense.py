@@ -101,22 +101,26 @@ class DeferredExpense(AccountsController):
 
 
 	def get_adjustment_entries(self, starting_date, num_of_months, expense_amount, deducted = False):
-		num_of_entries = num_of_months + 1 if (getdate(starting_date) != get_first_day(starting_date) 
-						 and getdate(starting_date) != get_last_day(starting_date)) else num_of_months
+		num_of_entries = num_of_months + 1 if ((getdate(starting_date) != get_first_day(starting_date) 
+						 and getdate(starting_date) != get_last_day(starting_date))
+						 or (self.opening_realized_expense_balance < 
+						 self.gross_expense_amount * self.number_of_adjustments_booked 
+						 / self.total_number_of_adjustments)) else num_of_months
 		date = starting_date
-		accumulated_amount, schedules = 0, []
+		accumulated_amount, schedules = self.gross_expense_amount - expense_amount, []
 		for n in range(num_of_entries):
 			amount, entry_day = 0, get_last_day(add_months(date, n))
 			if n == 0 and num_of_entries != num_of_months and not deducted:
 				part = expense_amount / num_of_months
 				month_days = date_diff(get_last_day(entry_day), get_last_day(add_months(entry_day, -1)))
 				amount_per_day = part / month_days
-				first_month_remaining_days = date_diff(get_last_day(date), date)
+				first_month_remaining_days = date_diff(get_last_day(date), date) + 1
 				amount = first_month_remaining_days * amount_per_day
 
 			elif n+1 == num_of_entries:
 				entry_day = add_days(add_months(starting_date, num_of_months), -1)
-				amount = expense_amount - accumulated_amount
+				amount = self.gross_expense_amount - accumulated_amount
+				# frappe.throw(str(accumulated_amount))
 				
 			else:
 				if num_of_entries != num_of_months and not deducted:

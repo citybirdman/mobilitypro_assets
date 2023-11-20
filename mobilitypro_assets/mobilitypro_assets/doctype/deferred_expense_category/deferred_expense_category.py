@@ -4,5 +4,5 @@
 # import frappe
 from frappe.utils.nestedset import NestedSet
 
-class ExpenseCategory(NestedSet):
+class DeferredExpenseCategory(NestedSet):
 	pass

@@ -1,25 +1,24 @@
 {
- "cards_label": "Doctypes",
+ "cards_label": "Deferred Expense",
  "category": "Modules",
  "charts": [],
- "creation": "2023-11-05 17:49:19.939229",
+ "creation": "2023-11-20 10:23:07.757609",
  "developer_mode_only": 0,
  "disable_user_customization": 0,
  "docstatus": 0,
  "doctype": "Workspace",
- "extends_another_page": 0,
+ "extends": "Accounting",
+ "extends_another_page": 1,
  "hide_custom": 0,
- "icon": "",
  "idx": 0,
  "is_default": 0,
  "is_standard": 1,
- "label": "Aiding tools",
+ "label": "Mobilitypro Assets",
  "links": [
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Doctypes",
-   "link_to": "",
+   "label": "Deferred Expense",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -31,28 +30,24 @@
    "link_to": "Deferred Expense",
    "link_type": "DocType",
    "onboard": 0,
-   "only_for": "Afghanistan",
    "type": "Link"
   },
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Expense Category",
-   "link_to": "Expense Category",
+   "label": "Deferred Expense Category",
+   "link_to": "Deferred Expense Category",
    "link_type": "DocType",
    "onboard": 0,
-   "only_for": "Afghanistan",
    "type": "Link"
   }
  ],
- "modified": "2023-11-14 10:39:29.533097",
+ "modified": "2023-11-20 10:57:11.362482",
  "modified_by": "Administrator",
  "module": "Mobilitypro Assets",
- "name": "Aiding tools",
- "onboarding": "",
- "owner": "ahmed.zaytoon@mobilityp.com",
+ "name": "Mobilitypro Assets",
+ "owner": "Administrator",
  "pin_to_bottom": 0,
  "pin_to_top": 0,
- "shortcuts": [],
- "shortcuts_label": ""
+ "shortcuts": []
 }

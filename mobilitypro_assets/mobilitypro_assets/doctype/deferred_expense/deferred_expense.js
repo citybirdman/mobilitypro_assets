@@ -7,12 +7,12 @@ frappe.ui.form.on('Deferred Expense', {
 		frappe.flags.ignore_links = true
 	},
 	onload: function(frm) {
-		frm.set_query("expense_category", {filters: {is_group:0} });
+		frm.set_query("deferred_expense_category", {filters: {is_group:0} });
 	},
 	accounting_dimensions_collapse: function(frm){
 		frm.fields_dict.accounting_dimensions_section.collapse();
 	},
-	expense_category: function(frm){
+	deferred_expense_category: function(frm){
 		if(frm.fields_dict.accounting_dimensions_section.is_collapsed())
 			frm.trigger("accounting_dimensions_collapse");
 	},
@@ -24,6 +24,12 @@ frappe.ui.form.on('Deferred Expense', {
 		if(!frm.fields_dict.accounting_dimensions_section.is_collapsed())
 			frm.trigger("accounting_dimensions_collapse");
 	},
+	is_existing_expense: function(frm){
+		if(!frm.doc.is_existing_expense){
+			frm.doc.opening_realized_expense_balance = 0
+			frm.doc.number_of_adjustments_booked = 0
+		}
+	},
 	// insert:function(frm){
 	// 	if(frm.doc.docstatus == 0){
 	// 		frm.doc.closing_date = "";
@@ -31,6 +37,8 @@ frappe.ui.form.on('Deferred Expense', {
 	// 	}
 	// },
 	refresh: function(frm){
+		if(frm.doc.gross_expense_amount - frm.doc.accumulated_adjustment_amount != frm.doc.balance_after_adjustments && frm.doc.accumulated_adjustment_amount)
+			frm.set_value('balance_after_adjustments', frm.doc.gross_expense_amount - frm.doc.accumulated_adjustment_amount)
 		if(frm.doc.docstatus == 1 && !frm.doc.closing_date){
 			frm.add_custom_button(
 				__('Close'), 
@@ -66,7 +74,7 @@ frappe.ui.form.on('Deferred Expense', {
 										document: frm.doc.name,
 										jv : values.closing_entry
 									} 
-								}).then(()=>{frm.refresh()});
+								}).then(()=>{frm.refresh(); window.location.reload()});
 							d.hide();
 						},
 						secondary_action_label: 'Abort',

@@ -4,5 +4,5 @@
 # import frappe
 import unittest
 
-class TestExpenseCategory(unittest.TestCase):
+class TestDeferredExpenseCategory(unittest.TestCase):
 	pass
