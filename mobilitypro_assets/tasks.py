@@ -58,7 +58,7 @@ def make_expense_entries():
 		for user in users:
 			frappe.sendmail(
 				recipients=user.email,
-				sender="ahmed.sharaf@mobilityp.com",
+				sender="notification@example.com",
 				subject="Error in schedular",
 				message=message,
 			)
