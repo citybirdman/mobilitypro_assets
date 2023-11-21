@@ -13,7 +13,7 @@
   "deferred_expense_account",
   "expense_account",
   "column_break_0eahb",
-  "parent_expense_category",
+  "parent_deferred_expense_category",
   "is_group",
   "old_parent"
  ],
@@ -67,10 +67,10 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "parent_expense_category",
+   "fieldname": "parent_deferred_expense_category",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Parent Expense Category",
+   "label": "Parent Deferred Expense Category",
    "options": "Deferred Expense Category"
   },
   {
