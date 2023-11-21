@@ -6,7 +6,6 @@ from datetime import timedelta, datetime
 import time
 
 def get_due_expense_entries():
-	frappe.throw("fuck that")
 	parent_docs = frappe.get_all('Deferred Expense', [['status', 'in', ['Partially Adjusted', 'Submitted']]], 'name')
 	parent_names = []
 	for parent in parent_docs:
