@@ -1,10 +1,12 @@
 import json
 import frappe
+import traceback
 from frappe.utils import (today, now_datetime, get_datetime)
-from datetime import timedelta
+from datetime import timedelta, datetime
 import time
 
 def get_due_expense_entries():
+	frappe.throw("fuck that")
 	parent_docs = frappe.get_all('Deferred Expense', [['status', 'in', ['Partially Adjusted', 'Submitted']]], 'name')
 	parent_names = []
 	for parent in parent_docs:
@@ -52,20 +54,20 @@ def make_expense_entries():
 				update_status(row.parent)
 				update_balance(row.parent)
 	except Exception as e:
-		error = frappe.get_doc(dict(status="Failed", doctype="Scheduled Job Log", details=str(e), scheduled_job_type="tasks.make_expense_entries")).insert(ignore_permissions=True)
+		logs = frappe.get_all("Scheduled Job Log", [["scheduled_job_type", "=", "tasks.make_expense_entries"],["status", "=", "Start"],["creation", ">", datetime.now() - timedelta(seconds=5)]])
+		for log in logs:
+			frappe.delete_doc("Scheduled Job Log", log.name, force=True, ignore_permissions=True, delete_permanently=True)
+		error = frappe.get_doc(dict(status="Failed", doctype="Scheduled Job Log", details=traceback.format_exc(), scheduled_job_type="tasks.make_expense_entries")).insert(ignore_permissions=True)
 		users = frappe.db.get_list("User", {"name":["in", "ahmed.zaytoon@mobilityp.com,ahmed.sharaf@mobilityp.com"], "enabled": 1}, "email")
-		message = '<p>'+str(e) +'on log'+ error.name +'<p>'
-		for user in users:
-			frappe.sendmail(
-				recipients=user.email,
-				sender="notification@example.com",
-				subject="Error in schedular",
-				message=message,
-			)
-
-		# frappe.throw(repr(error))
-
-		
+		message = '<p>'+traceback.format_exc() +'<br/>on log'+ error.name +'<p>'
+		if frappe.get_all("Email Account", filters={"default_outgoing": 1}, fields=["name", "email_id"]):
+			for user in users:
+				frappe.sendmail(
+					recipients=user.email,
+					sender="notifications@example.com",
+					subject="Error in schedular",
+					message=message,
+				)
 
 def update_status(document, status = "Partially Adjusted"):
 	if type(document) is str:

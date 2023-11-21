@@ -103,7 +103,7 @@ class DeferredExpense(AccountsController):
 	def get_adjustment_entries(self, starting_date, num_of_months, expense_amount, deducted = False):
 		num_of_entries = num_of_months + 1 if ((getdate(starting_date) != get_first_day(starting_date) 
 						 and getdate(starting_date) != get_last_day(starting_date))
-						 or (self.opening_realized_expense_balance < 
+						 or (self.is_existing_expense and self.opening_realized_expense_balance < 
 						 self.gross_expense_amount * self.number_of_adjustments_booked 
 						 / self.total_number_of_adjustments)) else num_of_months
 		date = starting_date
