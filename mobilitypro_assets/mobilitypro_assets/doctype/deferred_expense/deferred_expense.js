@@ -12,18 +12,6 @@ frappe.ui.form.on('Deferred Expense', {
 	accounting_dimensions_collapse: function(frm){
 		frm.fields_dict.accounting_dimensions_section.collapse();
 	},
-	deferred_expense_category: function(frm){
-		if(frm.fields_dict.accounting_dimensions_section.is_collapsed())
-			frm.trigger("accounting_dimensions_collapse");
-	},
-	branch: function(frm){
-		if(!frm.fields_dict.accounting_dimensions_section.is_collapsed())
-			frm.trigger("accounting_dimensions_collapse");
-	},
-	cost_center: function(frm){
-		if(!frm.fields_dict.accounting_dimensions_section.is_collapsed())
-			frm.trigger("accounting_dimensions_collapse");
-	},
 	is_existing_expense: function(frm){
 		if(!frm.doc.is_existing_expense){
 			frm.doc.opening_realized_expense_balance = 0
