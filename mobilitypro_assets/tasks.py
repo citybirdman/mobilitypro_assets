@@ -15,7 +15,6 @@ def get_due_expense_entries():
 
 def create_journal_entry(doc, date, amount, idx):
 	accounts = []
-	frappe.throw(str(doc.expense_account))
 	accounts.append({
 		'account': doc.deferred_expense_account,
 		'credit_in_account_currency': abs(amount),
@@ -28,7 +27,6 @@ def create_journal_entry(doc, date, amount, idx):
 		'reference_name': doc.name,
 		'branch': doc.branch,
 	})
-	frappe.throw(repr(accounts))
 	journal_entry = frappe.get_doc({
 		'doctype': 'Journal Entry',
 		'company': doc.company,
