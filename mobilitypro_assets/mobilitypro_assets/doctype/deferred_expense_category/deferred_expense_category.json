@@ -95,7 +95,7 @@
  "module": "Mobilitypro Assets",
  "name": "Deferred Expense Category",
  "name_case": "Title Case",
- "nsm_parent_field": "parent_expense_category",
+ "nsm_parent_field": "parent_deferred_expense_category",
  "owner": "Administrator",
  "permissions": [
   {

@@ -15,19 +15,20 @@ def get_due_expense_entries():
 
 def create_journal_entry(doc, date, amount, idx):
 	accounts = []
+	frappe.throw(str(doc.expense_account))
+	accounts.append({
+		'account': doc.deferred_expense_account,
+		'credit_in_account_currency': abs(amount),
+	})
+
 	accounts.append({
 		'account': doc.expense_account,
 		'debit_in_account_currency': abs(amount),
 		'reference_type': 'Deferred Expense',
 		'reference_name': doc.name,
-		'branch': doc.branch
+		'branch': doc.branch,
 	})
-	accounts.append({
-		'account': doc.deferred_expense_account,
-		'credit_in_account_currency': abs(amount)
-	})
-	
-	
+	frappe.throw(repr(accounts))
 	journal_entry = frappe.get_doc({
 		'doctype': 'Journal Entry',
 		'company': doc.company,
@@ -58,7 +59,7 @@ def make_expense_entries():
 			frappe.delete_doc("Scheduled Job Log", log.name, force=True, ignore_permissions=True, delete_permanently=True)
 		error = frappe.get_doc(dict(status="Failed", doctype="Scheduled Job Log", details=traceback.format_exc(), scheduled_job_type="tasks.make_expense_entries")).insert(ignore_permissions=True)
 		users = frappe.db.get_list("User", {"name":["in", "ahmed.zaytoon@mobilityp.com,ahmed.sharaf@mobilityp.com"], "enabled": 1}, "email")
-		message = '<p>'+traceback.format_exc() +'<br/>on log'+ error.name +'<p>'
+		message = '<p>'+str(traceback.format_exc()) +'<br/>on log'+ str(error.name) +'<p>'
 		if frappe.get_all("Email Account", filters={"default_outgoing": 1}, fields=["name", "email_id"]):
 			for user in users:
 				frappe.sendmail(

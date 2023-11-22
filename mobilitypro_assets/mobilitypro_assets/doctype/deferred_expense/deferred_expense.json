@@ -94,7 +94,7 @@
    "read_only": 1
   },
   {
-   "fetch_from": "expense_category.deferred_expense_account",
+   "fetch_from": "deferred_expense_category.deferred_expense_account",
    "fieldname": "deferred_expense_account",
    "fieldtype": "Link",
    "label": "Deferred expense Account",
@@ -102,7 +102,7 @@
    "read_only": 1
   },
   {
-   "fetch_from": "expense_category.expense_account",
+   "fetch_from": "deferred_expense_category.expense_account",
    "fieldname": "expense_account",
    "fieldtype": "Link",
    "label": "Expense Account",
@@ -282,10 +282,11 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-11-21 12:44:20.890029",
+ "modified": "2023-11-22 19:06:27.848195",
  "modified_by": "Administrator",
  "module": "Mobilitypro Assets",
  "name": "Deferred Expense",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {
@@ -321,5 +322,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }
