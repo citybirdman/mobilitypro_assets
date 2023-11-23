@@ -1,7 +1,7 @@
 import json
 import frappe
 import traceback
-from frappe.utils import (today, now_datetime, get_datetime)
+from frappe.utils import (today, format_date)
 from datetime import timedelta, datetime
 import time
 
@@ -27,13 +27,16 @@ def create_journal_entry(doc, date, amount, idx):
 		'reference_name': doc.name,
 		'branch': doc.branch,
 	})
+	for row in accounts:
+		if not row["account"]:
+			frappe.throw(_("Not all Accounts are set!"))
 	journal_entry = frappe.get_doc({
 		'doctype': 'Journal Entry',
 		'company': doc.company,
 		'posting_date': date,
 		'accounts': accounts,
-		'title': 'Deferred Expense ' + doc.name,
-		'user_remark':  " مصروف مقدم " + doc.name + " عن " + frappe.utils.format_date(today(), 'MM-YYYY')
+		'user_remark': doc.expense_name + " عن " + format_date(today(), 'MM-YYYY') +"<br/>" + " مصروف مقدم رقم " + str(idx),
+		'title': 'Deferred Expense ' + doc.name
 	}).insert()
 	journal_entry.flags.ignore_links = True
 	journal_entry.save()
@@ -58,11 +61,12 @@ def make_expense_entries():
 		error = frappe.get_doc(dict(status="Failed", doctype="Scheduled Job Log", details=traceback.format_exc(), scheduled_job_type="tasks.make_expense_entries")).insert(ignore_permissions=True)
 		users = frappe.db.get_list("User", {"name":["in", "ahmed.zaytoon@mobilityp.com,ahmed.sharaf@mobilityp.com"], "enabled": 1}, "email")
 		message = '<p>'+str(traceback.format_exc()) +'<br/>on log'+ str(error.name) +'<p>'
-		if frappe.get_all("Email Account", filters={"default_outgoing": 1}, fields=["name", "email_id"]):
+		email = frappe.get_all("Email Account", filters={"default_outgoing": 1}, fields=["name", "email_id"]);
+		if email[0]:
 			for user in users:
 				frappe.sendmail(
 					recipients=user.email,
-					sender="notifications@example.com",
+					sender=email[0],
 					subject="Error in schedular",
 					message=message,
 				)
@@ -109,7 +113,7 @@ def close_expense(document, jv=None):
 		document.append("schedules", row)
 	document.save()
 	document.db_set("closing_date", today())
-	document.db_set("balance_after_adjustments", document.gross_expense_amount)
-	document.db_set("accumulated_adjustment_amount", 0)
+	document.db_set("balance_after_adjustments", 0)
+	document.db_set("accumulated_adjustment_amount", document.gross_expense_amount)
 	update_status(document, "Closed")
 		

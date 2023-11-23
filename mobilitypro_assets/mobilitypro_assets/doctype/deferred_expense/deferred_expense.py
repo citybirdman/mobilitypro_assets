@@ -14,6 +14,7 @@ class DeferredExpense(AccountsController):
 
 	def validate(self):
 		self.flags.ignore_links = True
+		self.validate_category_accounts()
 
 	def before_save(self):
 		self.make_adjustment_entries()
@@ -40,6 +41,14 @@ class DeferredExpense(AccountsController):
 		
 		if self.gross_expense_amount == 0:
 			frappe.throw("The expense amount cannot be zero")
+	
+	def validate_category_accounts(self):
+		if frappe.get_cached_value("Deferred Expense Category", self.deferred_expense_category, "is_group") == 1:
+			frappe.throw(_("Deferred Expense Category cannot be parent"))
+		if not self.deferred_expense_account:
+			frappe.throw(_("Deferred Expense Category does not have Deferred Expense Account"))
+		if not self.expense_account:
+			frappe.throw(_("Deferred Expense Category does not have Expense Account"))
 
 	def edit_last_adjustment_last_date(self, date = None, months = 0):
 		if not date:
