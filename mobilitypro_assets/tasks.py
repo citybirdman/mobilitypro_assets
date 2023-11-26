@@ -55,7 +55,6 @@ def make_expense_entries():
 				update_status(row.parent)
 				update_balance(row.parent)
 		email = frappe.get_all("Email Account", filters={"default_outgoing": 1}, fields=["name", "email_id"])
-		frappe.throw("something wrong")
 
 	except Exception as e:
 		logs = frappe.get_all("Scheduled Job Log", [["scheduled_job_type", "=", "tasks.make_expense_entries"],["status", "=", "Start"],["creation", ">", datetime.now() - timedelta(seconds=5)]])
