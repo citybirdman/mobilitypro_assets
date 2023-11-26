@@ -61,12 +61,12 @@ def make_expense_entries():
 		error = frappe.get_doc(dict(status="Failed", doctype="Scheduled Job Log", details=traceback.format_exc(), scheduled_job_type="tasks.make_expense_entries")).insert(ignore_permissions=True)
 		users = frappe.db.get_list("User", {"name":["in", "ahmed.zaytoon@mobilityp.com,ahmed.sharaf@mobilityp.com"], "enabled": 1}, "email")
 		message = '<p>'+str(traceback.format_exc()) +'<br/>on log'+ str(error.name) +'<p>'
-		email = frappe.get_all("Email Account", filters={"default_outgoing": 1}, fields=["name", "email_id"]);
+		email = frappe.get_all("Email Account", filters={"default_outgoing": 1}, fields=["name", "email_id"])
 		if email[0]:
 			for user in users:
 				frappe.sendmail(
-					recipients=user.email,
-					sender=email[0],
+					recipients=user.email_id,
+					sender=email[0].name,
 					subject="Error in schedular",
 					message=message,
 				)
