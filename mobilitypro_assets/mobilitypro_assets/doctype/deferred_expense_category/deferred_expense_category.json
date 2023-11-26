@@ -30,7 +30,6 @@
    "fieldname": "lft",
    "fieldtype": "Int",
    "hidden": 1,
-   "in_list_view": 1,
    "label": "Left",
    "no_copy": 1,
    "read_only": 1
@@ -39,7 +38,6 @@
    "fieldname": "rgt",
    "fieldtype": "Int",
    "hidden": 1,
-   "in_list_view": 1,
    "label": "Right",
    "no_copy": 1,
    "read_only": 1
@@ -90,11 +88,12 @@
  ],
  "is_tree": 1,
  "links": [],
- "modified": "2023-11-20 10:51:55.886028",
+ "modified": "2023-11-26 18:04:09.779021",
  "modified_by": "Administrator",
  "module": "Mobilitypro Assets",
  "name": "Deferred Expense Category",
  "name_case": "Title Case",
+ "naming_rule": "By fieldname",
  "nsm_parent_field": "parent_deferred_expense_category",
  "owner": "Administrator",
  "permissions": [
@@ -125,6 +124,7 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "title_field": "deferred_expense_category",
  "track_changes": 1
 }

@@ -35,7 +35,7 @@ def create_journal_entry(doc, date, amount):
 		'company': doc.company,
 		'posting_date': date,
 		'accounts': accounts,
-		'user_remark': doc.expense_name + " عن " + format_date(today(), 'MM-YYYY') +"<br/>" + " مصروف مقدم رقم " + doc.name,
+		'user_remark': doc.expense_name + " عن " + format_date(date, 'MM-YYYY') +"<br/>" + " مصروف مقدم رقم " + doc.name,
 		'title': 'Deferred Expense ' + doc.name
 	}).insert()
 	journal_entry.flags.ignore_links = True

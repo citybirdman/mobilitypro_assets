@@ -281,8 +281,16 @@
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
- "links": [],
- "modified": "2023-11-22 19:06:27.848195",
+ "links": [
+  {
+   "is_child_table": 1,
+   "link_doctype": "Journal Entry Account",
+   "link_fieldname": "reference_name",
+   "parent_doctype": "Journal Entry",
+   "table_fieldname": "accounts"
+  }
+ ],
+ "modified": "2023-11-26 17:55:07.073147",
  "modified_by": "Administrator",
  "module": "Mobilitypro Assets",
  "name": "Deferred Expense",
