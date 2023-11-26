@@ -54,6 +54,9 @@ def make_expense_entries():
 			if row.parent != parent:
 				update_status(row.parent)
 				update_balance(row.parent)
+		email = frappe.get_all("Email Account", filters={"default_outgoing": 1}, fields=["name", "email_id"])
+		frappe.throw("something wrong")
+
 	except Exception as e:
 		logs = frappe.get_all("Scheduled Job Log", [["scheduled_job_type", "=", "tasks.make_expense_entries"],["status", "=", "Start"],["creation", ">", datetime.now() - timedelta(seconds=5)]])
 		for log in logs:
@@ -62,12 +65,12 @@ def make_expense_entries():
 		users = frappe.db.get_list("User", {"name":["in", "ahmed.zaytoon@mobilityp.com,ahmed.sharaf@mobilityp.com"], "enabled": 1}, "email")
 		message = '<p>'+str(traceback.format_exc()) +'<br/>on log'+ str(error.name) +'<p>'
 		email = frappe.get_all("Email Account", filters={"default_outgoing": 1}, fields=["name", "email_id"])
-		if email[0]:
+		if email:
 			for user in users:
 				frappe.sendmail(
-					recipients=user.email_id,
-					sender=email[0].name,
-					subject="Error in schedular",
+					recipients=user.email,
+					sender=email[0].email_id,
+					subject="Error in scheduler",
 					message=message,
 				)
 
