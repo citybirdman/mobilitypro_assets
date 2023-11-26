@@ -13,7 +13,7 @@ def get_due_expense_entries():
 	rows = frappe.get_all('Adjustments Schedule',[['schedule_date', '<', today()], ['docstatus', '=', 1], ['journal_entry', '=', ''], ['parent','in',parent_names ]], ['name', 'parent', 'schedule_date','adjustment_amount as amount', "idx"])
 	return rows
 
-def create_journal_entry(doc, date, amount, idx):
+def create_journal_entry(doc, date, amount):
 	accounts = []
 	accounts.append({
 		'account': doc.deferred_expense_account,
@@ -35,7 +35,7 @@ def create_journal_entry(doc, date, amount, idx):
 		'company': doc.company,
 		'posting_date': date,
 		'accounts': accounts,
-		'user_remark': doc.expense_name + " عن " + format_date(today(), 'MM-YYYY') +"<br/>" + " مصروف مقدم رقم " + str(idx),
+		'user_remark': doc.expense_name + " عن " + format_date(today(), 'MM-YYYY') +"<br/>" + " مصروف مقدم رقم " + doc.name,
 		'title': 'Deferred Expense ' + doc.name
 	}).insert()
 	journal_entry.flags.ignore_links = True
@@ -49,7 +49,7 @@ def make_expense_entries():
 		parent = ""
 		for row in rows:
 			doc = frappe.get_doc('Deferred Expense', row.parent)
-			jv_name = create_journal_entry(doc, row.schedule_date, row.amount, row.idx)
+			jv_name = create_journal_entry(doc, row.schedule_date, row.amount)
 			frappe.db.set_value('Adjustments Schedule', row.name, 'journal_entry', jv_name)
 			if row.parent != parent:
 				update_status(row.parent)
