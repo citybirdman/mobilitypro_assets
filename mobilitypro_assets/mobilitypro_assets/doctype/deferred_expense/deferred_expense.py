@@ -5,7 +5,7 @@
 import frappe
 from frappe import _
 from frappe.model.delete_doc import update_flags
-from frappe.utils import (add_months, date_diff, get_last_day, get_first_day, add_days, getdate)
+from frappe.utils import (add_months, date_diff, get_last_day, get_first_day, add_days, getdate, flt)
 from mobilitypro_assets.tasks import update_balance
 
 from erpnext.controllers.accounts_controller import AccountsController
@@ -144,7 +144,7 @@ class DeferredExpense(AccountsController):
 					amount = expense_amount / num_of_entries
 
 			accumulated_amount += amount
-			if amount != 0:
+			if flt(amount) != 0:
 				schedules.append({
 					"schedule_date": entry_day,
 					"adjustment_amount": amount,
