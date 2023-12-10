@@ -1,0 +1,65 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"eIi5Ow4Tps\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h1\\\" style=\\\"text-align:center; display:block\\\">MobilityPro Assets</span>\",\"col\":12}},{\"id\":\"CChmmcFVc_\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"eobJV0w83f\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"BXBHMmIxi9\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Deferred Expense\",\"col\":4}},{\"id\":\"c_KwbCJf-4\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"G1GqUEa_Ul\",\"type\":\"card\",\"data\":{\"card_name\":\"deferred expense\",\"col\":4}}]",
+ "creation": "2023-12-10 19:04:41.999951",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "arrow-right",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "mobility assets",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "deferred expense",
+   "link_count": 2,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Deferred Expense",
+   "link_count": 0,
+   "link_to": "Deferred Expense",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Deferred Expense Category",
+   "link_count": 0,
+   "link_to": "Deferred Expense Category",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2023-12-10 19:36:32.958403",
+ "modified_by": "Administrator",
+ "module": "Mobilitypro Assets",
+ "name": "mobility assets",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 3.0,
+ "shortcuts": [
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Deferred Expense",
+   "link_to": "Deferred Expense",
+   "type": "DocType"
+  }
+ ],
+ "title": "mobility assets"
+}
