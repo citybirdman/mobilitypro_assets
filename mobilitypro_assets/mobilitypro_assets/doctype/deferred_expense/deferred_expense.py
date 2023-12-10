@@ -108,8 +108,21 @@ class DeferredExpense(AccountsController):
 				return True
 		else: return False
 
+	def get_precision(self, doc_type, field_name):
+		meta = frappe.get_meta(doc_type)
+		field = meta.get_field(field_name)
+		if field.precision != '' and field.precision == None:
+			# Get the precision of the field
+			precision = field.precision
+		else:
+			precision = frappe.get_cached_value("System Settings", "System Settings", "currency_precision")
+			if precision == "" or precision is None:
+				precision = 3
+    
+		return precision
 
 	def get_adjustment_entries(self, starting_date, num_of_months, expense_amount, deducted = False):
+		pre = self.get_precision("Adjustments Schedule", "adjustment_amount")
 		num_of_entries = num_of_months + 1 if ((getdate(starting_date) != get_first_day(starting_date) 
 						 and getdate(starting_date) != get_last_day(starting_date))
 						 or (self.is_existing_expense and self.opening_realized_expense_balance < 
@@ -124,7 +137,7 @@ class DeferredExpense(AccountsController):
 				month_days = date_diff(get_last_day(entry_day), get_last_day(add_months(entry_day, -1)))
 				amount_per_day = part / month_days
 				first_month_remaining_days = date_diff(get_last_day(date), date) + 1
-				amount = first_month_remaining_days * amount_per_day
+				amount = flt(first_month_remaining_days * amount_per_day, pre)
 
 			elif n+1 == num_of_entries:
 				entry_day = add_days(add_months(starting_date, num_of_months), -1)
@@ -134,17 +147,17 @@ class DeferredExpense(AccountsController):
 			else:
 				if num_of_entries != num_of_months and not deducted:
 					part = expense_amount / num_of_months
-					amount = (expense_amount - part) / (num_of_entries - 2)
+					amount = flt((expense_amount - part) / (num_of_entries - 2), pre)
 				elif deducted:
-					amount = self.gross_expense_amount / self.total_number_of_adjustments
+					amount = flt(self.gross_expense_amount / self.total_number_of_adjustments, pre)
 					if self.opening_realized_expense_balance / self.number_of_adjustments_booked > amount:
 						frappe.throw(_("The calculation of Opening Realized Expense Balance over Number Of Adjustments Booked cannot be greater than the Adjustment Amount per month (" + str(amount) + ")"))
 
 				else:
-					amount = expense_amount / num_of_entries
+					amount = flt(expense_amount / num_of_entries, pre)
 
 			accumulated_amount += amount
-			if flt(amount) != 0:
+			if amount != 0:
 				schedules.append({
 					"schedule_date": entry_day,
 					"adjustment_amount": amount,
