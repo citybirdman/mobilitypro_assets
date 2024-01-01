@@ -10,7 +10,7 @@ def get_due_expense_entries():
 	parent_names = []
 	for parent in parent_docs:
 		parent_names.append(parent.name)
-	rows = frappe.get_all('Adjustments Schedule',[['schedule_date', '<', today()], ['docstatus', '=', 1], ['journal_entry', '=', ''], ['parent','in',parent_names ]], ['name', 'parent', 'schedule_date','adjustment_amount as amount', "idx"])
+	rows = frappe.get_all('Adjustments Schedule',[['schedule_date', '<=', today()], ['docstatus', '=', 1], ['journal_entry', '=', ''], ['parent','in',parent_names ]], ['name', 'parent', 'schedule_date','adjustment_amount as amount', "idx"])
 	return rows
 
 def create_journal_entry(doc, date, amount):
