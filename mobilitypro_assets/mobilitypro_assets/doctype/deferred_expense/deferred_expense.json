@@ -197,7 +197,7 @@
    "label": "Adjustments Schedule",
    "no_copy": 1,
    "options": "Adjustments Schedule",
-   "read_only": 1
+   "read_only": 0
   },
   {
    "fieldname": "other_details",
