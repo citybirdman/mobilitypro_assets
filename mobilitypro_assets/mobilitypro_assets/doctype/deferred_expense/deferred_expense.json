@@ -196,8 +196,7 @@
    "fieldtype": "Table",
    "label": "Adjustments Schedule",
    "no_copy": 1,
-   "options": "Adjustments Schedule",
-   "read_only": 1
+   "options": "Adjustments Schedule"
   },
   {
    "fieldname": "other_details",
@@ -290,7 +289,7 @@
    "table_fieldname": "accounts"
   }
  ],
- "modified": "2023-11-26 17:55:07.073147",
+ "modified": "2024-01-02 14:47:28.269338",
  "modified_by": "Administrator",
  "module": "Mobilitypro Assets",
  "name": "Deferred Expense",
