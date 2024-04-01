@@ -50,11 +50,13 @@ def make_expense_entries():
 		parent = ""
 		for row in rows:
 			doc = frappe.get_doc('Deferred Expense', row.parent)
-			if not acc_settings.acc_frozen_upto or ((date_diff(row.schedule_date, acc_settings.acc_frozen_upto) > 0) or (date_diff(row.schedule_date, acc_settings.acc_frozen_upto) > 0 and acc_settings.frozen_accounts_modifier == "Administrator" )):
+			frappe.throw(frappe.user)
+			# (date_diff(row.schedule_date, acc_settings.acc_frozen_upto) <= 0 and acc_settings.frozen_accounts_modifier == "Administrator" ))
+			if not acc_settings.acc_frozen_upto or date_diff(row.schedule_date, acc_settings.acc_frozen_upto) > 0:
 				jv_name = create_journal_entry(doc, row.schedule_date, row.amount)
 				frappe.db.set_value('Adjustments Schedule', row.name, 'journal_entry', jv_name)
 			else:
-				frappe.throw(f"cannot make journal entries for date {row.schedule_date} while the accounts are frozen")
+				frappe.throw(f"You are not authorized to add or update entries before {acc_settings.acc_frozen_upto}")
 			if row.parent != parent:
 				update_status(row.parent)
 				update_balance(row.parent)
