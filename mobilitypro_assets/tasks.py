@@ -50,7 +50,6 @@ def make_expense_entries():
 		parent = ""
 		for row in rows:
 			doc = frappe.get_doc('Deferred Expense', row.parent)
-			frappe.throw(frappe.user)
 			# (date_diff(row.schedule_date, acc_settings.acc_frozen_upto) <= 0 and acc_settings.frozen_accounts_modifier == "Administrator" ))
 			if not acc_settings.acc_frozen_upto or date_diff(row.schedule_date, acc_settings.acc_frozen_upto) > 0:
 				jv_name = create_journal_entry(doc, row.schedule_date, row.amount)
