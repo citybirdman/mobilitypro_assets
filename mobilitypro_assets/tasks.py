@@ -1,7 +1,8 @@
 import json
 import frappe
 import traceback
-from frappe.utils import (today, format_date, date_diff)
+from frappe.utils import (today, format_date, date_diff, flt)
+from frappe import _
 from datetime import timedelta, datetime
 import time
 
@@ -99,28 +100,183 @@ def update_balance(doc):
 	doc.db_set("accumulated_adjustment_amount", balance)
 	doc.db_set("balance_after_adjustments", (doc.gross_expense_amount - balance))
 
+
+def _get_currency_precision():
+	precision = frappe.get_cached_value("System Settings", "System Settings", "currency_precision")
+	return int(precision) if precision not in (None, "") else 3
+
+def _je_total_amount(je_doc):
+	"""
+	Compute total of the Journal Entry from its accounts table.
+	Most JEs are balanced; using total_debit is a reasonable proxy.
+	We also validate it's balanced.
+	"""
+	total_debit = 0
+	total_credit = 0
+	for row in (je_doc.get("accounts") or []):
+		total_debit += flt(row.debit_in_account_currency or 0)
+		total_credit += flt(row.credit_in_account_currency or 0)
+
+	return total_debit, total_credit
+
 @frappe.whitelist()
 def close_expense(document, jv=None):
-	if type(document) is str:
+	if isinstance(document, str):
 		document = frappe.get_doc("Deferred Expense", document)
-	adjustments = []
-	for row in document.schedules:
-		if row.journal_entry:
-			adjustments.append(row)
-	if not jv:
-		jv = create_journal_entry(document, today(), document.balance_after_adjustments)
+
+	# must be submitted if you want "close" only after submit (recommended)
+	if document.docstatus != 1:
+		frappe.throw(_("Deferred Expense must be submitted before closing."))
+
+	remaining = flt(document.balance_after_adjustments)
+	if remaining <= 0:
+		frappe.throw(_("Remaining balance must be greater than zero to close."))
+
+	precision = _get_currency_precision()
+
+	# Collect already-posted schedule rows (keep them)
+	adjustments = [row for row in (document.get("schedules") or []) if row.journal_entry]
+
+	# If user supplied JV, validate it
+	if jv:
+		je = frappe.get_doc("Journal Entry", jv)
+
+		# basic status checks
+		if je.docstatus != 1:
+			frappe.throw(_("Closing Journal Entry must be Submitted (docstatus = 1)."))
+
+		# Amount check: JE amount should equal remaining balance
+		total_debit, total_credit = _je_total_amount(je)
+
+		# validate JE is balanced (optional but strongly recommended)
+		if flt(total_debit, precision) != flt(total_credit, precision):
+			frappe.throw(_("Journal Entry is not balanced (debit != credit)."))
+
+		# match remaining balance (compare against total debit)
+		if flt(total_debit, precision) != flt(remaining, precision):
+			frappe.throw(_(
+				"Closing Journal Entry amount ({0}) must equal remaining balance ({1})."
+			).format(flt(total_debit, precision), flt(remaining, precision)))
+
+		# Check if this JE is already linked as closing entry in another Deferred Expense
+		existing_close = frappe.db.exists(
+			"Deferred Expense",
+			{
+				"closing_journal_entry": jv,
+				"name": ["!=", document.name],
+				"docstatus": ["!=", 2],  # not cancelled docs
+			},
+		)
+		if existing_close:
+			frappe.throw(_(
+				"Journal Entry {0} is already used as Closing Journal Entry in Deferred Expense {1}."
+			).format(jv, existing_close))
+
+		# Optional: also block if the same JE appears in ANY schedules row elsewhere
+		used_in_schedule = frappe.db.sql(
+			"""
+			SELECT parent
+			FROM `tabAdjustments Schedule`
+			WHERE journal_entry = %s AND parent != %s
+			LIMIT 1
+			""",
+			(jv, document.name),
+		)
+		if used_in_schedule:
+			frappe.throw(_(
+				"Journal Entry {0} is already linked in schedules of Deferred Expense {1}."
+			).format(jv, used_in_schedule[0][0]))
+
+	else:
+		# Auto-create JE for the remaining balance
+		jv = create_journal_entry(document, today(), remaining)
+
+	# Append the closing schedule row
 	adjustments.append({
-					"schedule_date": today(),
-					"adjustment_amount": document.balance_after_adjustments,
-					"accumulated_adjustment_amount": document.gross_expense_amount,
-					"journal_entry": jv
-					})
+		"schedule_date": today(),
+		"adjustment_amount": remaining,
+		"accumulated_adjustment_amount": document.gross_expense_amount,
+		"journal_entry": jv
+	})
+
+	# Rewrite schedules to keep posted ones + closing row
 	document.get("schedules").clear()
 	for row in adjustments:
 		document.append("schedules", row)
-	document.save()
+
+	# Save + mark closed fields
+	document.save(ignore_permissions=True)
 	document.db_set("closing_date", today())
+	document.db_set("closing_journal_entry", jv)  # <-- requested
 	document.db_set("balance_after_adjustments", 0)
 	document.db_set("accumulated_adjustment_amount", document.gross_expense_amount)
+	document.db_set("closing_journal_entry", jv)
 	update_status(document, "Closed")
+	return {"ok": True, "closing_journal_entry": jv}
 		
+
+
+import frappe
+from frappe import _
+from frappe.utils import flt
+
+@frappe.whitelist()
+def reopen_expense(document):
+    doc = frappe.get_doc("Deferred Expense", document) if isinstance(document, str) else document
+
+    if doc.docstatus != 1:
+        frappe.throw(_("Only submitted documents can be re-opened."))
+
+    if doc.status != "Closed" or not doc.closing_date:
+        frappe.throw(_("Document is not closed."))
+
+    closing_jv = getattr(doc, "closing_journal_entry", None)
+
+    # 1) Build a map: schedule_date -> journal_entry (posted rows only), excluding closing JV
+    posted_jv_by_date = {}
+    for row in (doc.get("schedules") or []):
+        if not row.journal_entry:
+            continue
+        if closing_jv and row.journal_entry == closing_jv:
+            continue
+        posted_jv_by_date[row.schedule_date] = row.journal_entry
+
+    # 2) Cancel closing JE (DO NOT DELETE)
+    if closing_jv:
+        je = frappe.get_doc("Journal Entry", closing_jv)
+        if je.docstatus == 1:
+            je.cancel()
+
+    # 3) Clear closing metadata BEFORE recompute (so it behaves like reopened)
+    doc.db_set("closing_date", None)
+    if hasattr(doc, "closing_journal_entry"):
+        doc.db_set("closing_journal_entry", None)
+
+    # 4) Recompute schedules fully using the DocType method
+    doc.make_adjustment_entries()
+
+    # 5) Re-attach the old posted journal entries onto the new schedule by date
+    attached_count = 0
+    for row in (doc.get("schedules") or []):
+        jv = posted_jv_by_date.get(row.schedule_date)
+        if jv:
+            row.journal_entry = jv
+            attached_count += 1
+
+    # 6) Save and recompute balances
+    doc.save(ignore_permissions=True)
+    update_balance(doc)
+
+    # 7) Status rule
+    new_status = "Partially Adjusted" if attached_count > 0 else "Submitted"
+    update_status(doc, new_status)
+
+    return {
+        "ok": True,
+        "status": new_status,
+        "attached_jv_count": attached_count,
+        "missing_dates": [
+            str(d) for d in posted_jv_by_date.keys()
+            if d not in {r.schedule_date for r in (doc.get("schedules") or [])}
+        ],
+    }

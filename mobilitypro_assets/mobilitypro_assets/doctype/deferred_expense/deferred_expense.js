@@ -44,12 +44,15 @@ frappe.ui.form.on('Deferred Expense', {
 								fieldname: 'closing_entry',
 								fieldtype: 'Link',
 								options: 'Journal Entry',
-								default: ''
-							},
-							{
-								label: __('Information'),
-								fieldtype: 'HTML',
-								options: '<p>Are you sure to continue? (this cannot be undone)</p>',
+								default: '',
+								get_query() {
+									return {
+										filters: {
+											docstatus: 1,
+											company: frm.doc.company
+										}
+									};
+								}
 							}
 						],
 						size: 'small', // small, large, extra-large 
@@ -62,7 +65,7 @@ frappe.ui.form.on('Deferred Expense', {
 										document: frm.doc.name,
 										jv : values.closing_entry
 									} 
-								}).then(()=>{frm.refresh(); window.location.reload()});
+								}).then(()=>{frm.reload_doc()});
 							d.hide();
 						},
 						secondary_action_label: 'Abort',
@@ -72,6 +75,26 @@ frappe.ui.form.on('Deferred Expense', {
 					d.show();
 				}
 			).css({'background-color': '#343a40', 'border-color': '#343a40', 'color':'#fff'});
+		}
+		if (frm.doc.docstatus === 1 && frm.doc.status === "Closed") {
+			const closing_jv = frm.doc.closing_journal_entry || frm.doc.closing_journal_entry_name || "";
+
+			frm.add_custom_button(__('Re-open'), function () {
+
+				const msg = closing_jv
+				? __(`This will CANCEL the closing Journal Entry <b>${closing_jv}</b> and re-open the schedule. Continue?`)
+				: __('This will CANCEL the closing Journal Entry and re-open the schedule. Continue?');
+
+				frappe.confirm(msg, () => {
+					frappe.call({
+						method: "mobilitypro_assets.tasks.reopen_expense",
+						args: { document: frm.doc.name }
+					}).then(() => {
+						frm.reload_doc();
+					});
+				});
+
+			}).addClass('btn-warning');
 		}
 	}
 });
