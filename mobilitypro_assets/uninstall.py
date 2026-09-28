@@ -1,18 +1,10 @@
-import frappe
+from mobilitypro_assets.install import REFERENCE_TYPE, get_reference_type_options, set_reference_type_options
 
 def before_uninstall():
     reset_journal_entry_account_reference_type_field()
 
 def reset_journal_entry_account_reference_type_field():
-    options = frappe.db.get_value("Property Setter", {"doc_type": "Journal Entry Account", "field_name":"reference_type", "property":"options"}, "value")
-    if not options:
-        options = frappe.db.get_value("DocField", {"parent": "Journal Entry Account", "fieldname":"reference_type"}, "options")
-    options = options.split("\n")
-    options.pop()
-    options = "\n".join(options)
-    frappe.db.set_value("Property Setter", 
-                        {"doc_type": "Journal Entry Account", "field_name":"reference_type", "property":"options"},
-                        "value", options)
-    frappe.db.set_value("DocField", {"parent": "Journal Entry Account", "fieldname":"reference_type"}, "options", options)
-    frappe.db.commit()
-    frappe.clear_cache()
+    options = get_reference_type_options()
+    if REFERENCE_TYPE not in options:
+        return
+    set_reference_type_options([option for option in options if option != REFERENCE_TYPE])

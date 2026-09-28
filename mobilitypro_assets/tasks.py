@@ -11,8 +11,16 @@ def get_due_expense_entries():
 	parent_names = []
 	for parent in parent_docs:
 		parent_names.append(parent.name)
-	rows = frappe.get_all('Adjustments Schedule',[['schedule_date', '<=', today()], ['docstatus', '=', 1], ['journal_entry', '=', ''], ['parent','in',parent_names ]], ['name', 'parent', 'schedule_date','adjustment_amount as amount', "idx"])
+	if not parent_names:
+		return []
+	rows = frappe.get_all('Adjustments Schedule', [['schedule_date', '<=', today()], ['docstatus', '=', 1], ['journal_entry', 'is', 'not set'], ['parent','in',parent_names ]], ['name', 'parent', 'schedule_date','adjustment_amount as amount', "idx"])
 	return rows
+
+def get_accounts_frozen_till_date(company):
+	# ERPNext v16 moved the frozen accounts date from Accounts Settings to Company
+	if frappe.get_meta("Company").has_field("accounts_frozen_till_date"):
+		return frappe.get_cached_value("Company", company, "accounts_frozen_till_date")
+	return frappe.db.get_single_value("Accounts Settings", "acc_frozen_upto")
 
 def create_journal_entry(doc, date, amount):
 	accounts = []
@@ -46,17 +54,16 @@ def create_journal_entry(doc, date, amount):
 
 def make_expense_entries():
 	try:
-		acc_settings = frappe.db.get_value("Accounts Settings", "Accounts Settings", ["acc_frozen_upto", "frozen_accounts_modifier"], as_dict = 1)
 		rows = get_due_expense_entries()
 		parent = ""
 		for row in rows:
 			doc = frappe.get_doc('Deferred Expense', row.parent)
-			# (date_diff(row.schedule_date, acc_settings.acc_frozen_upto) <= 0 and acc_settings.frozen_accounts_modifier == "Administrator" ))
-			if not acc_settings.acc_frozen_upto or date_diff(row.schedule_date, acc_settings.acc_frozen_upto) > 0:
+			frozen_till_date = get_accounts_frozen_till_date(doc.company)
+			if not frozen_till_date or date_diff(row.schedule_date, frozen_till_date) > 0:
 				jv_name = create_journal_entry(doc, row.schedule_date, row.amount)
 				frappe.db.set_value('Adjustments Schedule', row.name, 'journal_entry', jv_name)
 			else:
-				frappe.throw(f"You are not authorized to add or update entries before {acc_settings.acc_frozen_upto}")
+				frappe.throw(f"You are not authorized to add or update entries before {frozen_till_date}")
 			if row.parent != parent:
 				update_status(row.parent)
 				update_balance(row.parent)
@@ -222,61 +229,62 @@ from frappe.utils import flt
 
 @frappe.whitelist()
 def reopen_expense(document):
-    doc = frappe.get_doc("Deferred Expense", document) if isinstance(document, str) else document
+	doc = frappe.get_doc("Deferred Expense", document) if isinstance(document, str) else document
 
-    if doc.docstatus != 1:
-        frappe.throw(_("Only submitted documents can be re-opened."))
+	if doc.docstatus != 1:
+		frappe.throw(_("Only submitted documents can be re-opened."))
 
-    if doc.status != "Closed" or not doc.closing_date:
-        frappe.throw(_("Document is not closed."))
+	if doc.status != "Closed" or not doc.closing_date:
+		frappe.throw(_("Document is not closed."))
 
-    closing_jv = getattr(doc, "closing_journal_entry", None)
+	closing_jv = getattr(doc, "closing_journal_entry", None)
 
-    # 1) Build a map: schedule_date -> journal_entry (posted rows only), excluding closing JV
-    posted_jv_by_date = {}
-    for row in (doc.get("schedules") or []):
-        if not row.journal_entry:
-            continue
-        if closing_jv and row.journal_entry == closing_jv:
-            continue
-        posted_jv_by_date[row.schedule_date] = row.journal_entry
+	# 1) Build a map: schedule_date -> journal_entry (posted rows only), excluding closing JV
+	posted_jv_by_date = {}
+	for row in (doc.get("schedules") or []):
+		if not row.journal_entry:
+			continue
+		if closing_jv and row.journal_entry == closing_jv:
+			continue
+		posted_jv_by_date[row.schedule_date] = row.journal_entry
 
-    # 2) Cancel closing JE (DO NOT DELETE)
-    if closing_jv:
-        je = frappe.get_doc("Journal Entry", closing_jv)
-        if je.docstatus == 1:
-            je.cancel()
+	# 2) Cancel closing JE (DO NOT DELETE)
+	if closing_jv:
+		je = frappe.get_doc("Journal Entry", closing_jv)
+		if je.docstatus == 1:
+			je.flags.ignore_links = True
+			je.cancel()
 
-    # 3) Clear closing metadata BEFORE recompute (so it behaves like reopened)
-    doc.db_set("closing_date", None)
-    if hasattr(doc, "closing_journal_entry"):
-        doc.db_set("closing_journal_entry", None)
+	# 3) Clear closing metadata BEFORE recompute (so it behaves like reopened)
+	doc.db_set("closing_date", None)
+	if hasattr(doc, "closing_journal_entry"):
+		doc.db_set("closing_journal_entry", None)
 
-    # 4) Recompute schedules fully using the DocType method
-    doc.make_adjustment_entries()
+	# 4) Recompute schedules fully using the DocType method
+	doc.make_adjustment_entries()
 
-    # 5) Re-attach the old posted journal entries onto the new schedule by date
-    attached_count = 0
-    for row in (doc.get("schedules") or []):
-        jv = posted_jv_by_date.get(row.schedule_date)
-        if jv:
-            row.journal_entry = jv
-            attached_count += 1
+	# 5) Re-attach the old posted journal entries onto the new schedule by date
+	attached_count = 0
+	for row in (doc.get("schedules") or []):
+		jv = posted_jv_by_date.get(row.schedule_date)
+		if jv:
+			row.journal_entry = jv
+			attached_count += 1
 
-    # 6) Save and recompute balances
-    doc.save(ignore_permissions=True)
-    update_balance(doc)
+	# 6) Save and recompute balances
+	doc.save(ignore_permissions=True)
+	update_balance(doc)
 
-    # 7) Status rule
-    new_status = "Partially Adjusted" if attached_count > 0 else "Submitted"
-    update_status(doc, new_status)
+	# 7) Status rule
+	new_status = "Partially Adjusted" if attached_count > 0 else "Submitted"
+	update_status(doc, new_status)
 
-    return {
-        "ok": True,
-        "status": new_status,
-        "attached_jv_count": attached_count,
-        "missing_dates": [
-            str(d) for d in posted_jv_by_date.keys()
-            if d not in {r.schedule_date for r in (doc.get("schedules") or [])}
-        ],
-    }
+	return {
+		"ok": True,
+		"status": new_status,
+		"attached_jv_count": attached_count,
+		"missing_dates": [
+			str(d) for d in posted_jv_by_date.keys()
+			if d not in {r.schedule_date for r in (doc.get("schedules") or [])}
+		],
+	}

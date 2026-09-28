@@ -41,7 +41,6 @@
   "schedules",
   "other_details",
   "status",
-  "amended_from",
   "amended_from"
  ],
  "fields": [
@@ -268,15 +267,6 @@
    "label": "Status",
    "no_copy": 1,
    "options": "Draft\nSubmitted\nPartially Adjusted\nFully Adjusted\nClosed\nCancelled",
-   "read_only": 1
-  },
-  {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Deferred Expense",
-   "print_hide": 1,
    "read_only": 1
   },
   {

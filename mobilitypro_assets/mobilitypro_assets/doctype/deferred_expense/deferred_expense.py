@@ -4,7 +4,6 @@
 
 import frappe
 from frappe import _
-from frappe.model.delete_doc import update_flags
 from frappe.utils import (add_months, date_diff, get_last_day, get_first_day, add_days, getdate, flt)
 from mobilitypro_assets.tasks import update_balance
 

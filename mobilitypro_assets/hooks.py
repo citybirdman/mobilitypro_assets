@@ -9,6 +9,8 @@ app_color = "green"
 app_email = "citybirdman@gmail.com"
 app_license = "MIT"
 
+required_apps = ["erpnext"]
+
 # Includes in <head>
 # ------------------
 
@@ -56,8 +58,8 @@ app_license = "MIT"
 # Installation
 # ------------
 
-before_install = "mobilitypro_assets.install.before_install"
-# after_install = "mobilitypro_assets.install.after_install"
+after_install = "mobilitypro_assets.install.after_install"
+after_migrate = "mobilitypro_assets.install.after_migrate"
 
 # Uninstallation
 # ------------
@@ -160,26 +162,14 @@ scheduler_events = {
 # User Data Protection
 # --------------------
 
-user_data_fields = [
-	{
-		"doctype": "{doctype_1}",
-		"filter_by": "{filter_by}",
-		"redact_fields": ["{field_1}", "{field_2}"],
-		"partial": 1,
-	},
-	{
-		"doctype": "{doctype_2}",
-		"filter_by": "{filter_by}",
-		"partial": 1,
-	},
-	{
-		"doctype": "{doctype_3}",
-		"strict": False,
-	},
-	{
-		"doctype": "{doctype_4}"
-	}
-]
+# user_data_fields = [
+#	{
+#		"doctype": "{doctype_1}",
+#		"filter_by": "{filter_by}",
+#		"redact_fields": ["{field_1}", "{field_2}"],
+#		"partial": 1,
+#	},
+# ]
 
 # Authentication and authorization
 # --------------------------------
